@@ -15,12 +15,10 @@ class Service:
         self.comment = comment
 
     def add_to_table(self, executor):
-        executor.execute(self.ADD.format(self.id, self.name, self.cre_date, self.summ, self.comment))
-        executor.commit()
+        executor.modify(self.ADD.format(self.id, self.name, self.cre_date, self.summ, self.comment))
 
     def is_in_table(self, executor):
-        executor.execute(self.SELECT)
-        ids = executor.cursor.fetchall()
+        ids = executor.select(self.SELECT)
         id = [self.id]
         for i in ids:
             if tuple(i) == tuple(id):
@@ -28,5 +26,4 @@ class Service:
         return False
 
     def del_from_table(self, executor):
-        executor.execute(self.DELETE.format(self.id))
-        executor.commit()
+        executor.modify(self.DELETE.format(self.id))
