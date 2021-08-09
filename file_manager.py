@@ -2,10 +2,17 @@ import json
 
 
 class FileManager:
-    @staticmethod
-    def get_data(key, filename):
-        """Returns value from given JSON file with given key.
-        """
-        file = open(filename)
-        json_data = json.load(file)
-        return json_data[key]
+    __instance = None
+
+    def __init__(self, file):
+        if FileManager.__instance is not None:
+            raise Exception("More than one instance in Singleton")
+        else:
+            file = open(file)
+            self.data = json.load(file)
+
+    def get_data(self, key):
+        return self.data[key]
+
+    def clear(self):
+        FileManager.__instance = None

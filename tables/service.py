@@ -2,10 +2,10 @@ import datetime
 
 
 class Service:
-    ADD = "INSERT INTO SERVICE (SERV_ID, NAME, CRE_DATE, SUMM_INCL, COMMENT)"\
+    _SQL_INSERT = "INSERT INTO SERVICE (SERV_ID, NAME, CRE_DATE, SUMM_INCL, COMMENT)"\
           "VALUES ({}, '{}', '{}', {}, {});"
-    SELECT = "SELECT SERV_ID FROM SERVICE ORDER BY SERV_ID"
-    DELETE = "DELETE FROM SERVICE WHERE SERV_ID = {}"
+    _SQL_SELECT = "SELECT SERV_ID FROM SERVICE ORDER BY SERV_ID"
+    _SQL_DELETE = "DELETE FROM SERVICE WHERE SERV_ID = {}"
 
     def __init__(self, id, name, summ, comment='NULL'):
         self.id = id
@@ -15,10 +15,10 @@ class Service:
         self.comment = comment
 
     def add_to_table(self, executor):
-        executor.modify(self.ADD.format(self.id, self.name, self.cre_date, self.summ, self.comment))
+        executor.modify(self._SQL_INSERT.format(self.id, self.name, self.cre_date, self.summ, self.comment))
 
     def is_in_table(self, executor):
-        ids = executor.select(self.SELECT)
+        ids = executor.select(self._SQL_SELECT)
         id = [self.id]
         for i in ids:
             if tuple(i) == tuple(id):
@@ -26,4 +26,4 @@ class Service:
         return False
 
     def del_from_table(self, executor):
-        executor.modify(self.DELETE.format(self.id))
+        executor.modify(self._SQL_DELETE.format(self.id))

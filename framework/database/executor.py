@@ -1,6 +1,12 @@
 class Executor:
+    __instance = None
+
     def __init__(self, connection):
-        self.cursor = connection.cursor()
+        if Executor.__instance is not None:
+            raise Exception("More than one instance in Singleton")
+        else:
+            self.cursor = connection.cursor()
+            Executor.__instance = self
 
     def select(self, query):
         self.cursor.execute(query)
@@ -10,3 +16,5 @@ class Executor:
         self.cursor.execute(query)
         self.cursor.commit()
 
+    def clear(self):
+        Executor.__instance = None
