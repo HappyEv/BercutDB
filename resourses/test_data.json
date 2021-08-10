@@ -1,12 +1,21 @@
 {
   "test_1": {
     "service": {
-      "name": "Услуга 3",
+      "name": "Test",
       "summ": 25
     },
     "tariff": {
-      "name": "Тариф 4",
+      "name": "Test",
       "summ": 50
+    },
+    "client": {
+      "name": "Test",
+      "type_id": 1,
+      "balance": 100
+    },
+    "subscriber": {
+      "name": "Test",
+      "phone": "+79650961409"
     }
   }
 }

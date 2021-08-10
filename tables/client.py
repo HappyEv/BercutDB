@@ -6,7 +6,7 @@ class Client(BaseTable):
 BEGIN
 	DECLARE @id int;
 
-	EXECUTE CreateClient	@Name = {},
+	EXECUTE CreateClient	@Name = '{}',
 							@ClntTypeId = {},
 							@BalanceSumm = {},
 							@ClientId = @id OUTPUT
@@ -14,7 +14,9 @@ BEGIN
 end
     """
     _SQL_SELECT = "SELECT CLNT_ID FROM CLIENT ORDER BY CLNT_ID"
-    _SQL_DELETE = "DELETE FROM CLIENT WHERE CLNT_ID = {}"
+    _SQL_DELETE = """DELETE FROM CLIENT_BALANCE WHERE CLNT_BAL_ID = {}
+                     DELETE FROM CLIENT WHERE CLNT_ID = {}
+                  """
     _SQL_GET_LAST_ID = "SELECT TOP 1 CLNT_ID FROM CLIENT ORDER BY CLNT_ID DESC"
 
     def __init__(self, executor, type_id, name, summ, addr_city='NULL', addr_street='NULL', addr_house='NULL',
@@ -28,6 +30,9 @@ end
         self.addr_house = addr_house
         self.email = email
         self.comment = comment
+
+    def del_from_table(self, executor):
+        executor.modify(self._SQL_DELETE.format(self.id, self.id))
 
     def add_to_table(self, executor):
         executor.modify(self._SQL_INSERT.format(self.name, self.type_id, self.summ))

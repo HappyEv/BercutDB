@@ -1,4 +1,5 @@
 import json
+import os
 import pyodbc
 
 
@@ -7,9 +8,9 @@ class Connection:
 
     def __init__(self):
         if Connection.__instance is not None:
-            raise Exception("More than one instance in Singleton")
+            self.conn = Connection.__instance.conn
         else:
-            file = open("resourses/connection_config.json")
+            file = open(os.path.abspath("resourses/connection_config.json"))
             json_data = json.load(file)
             conn_str = 'DRIVER={' + json_data["driver"] + '}; \
                                 SERVER=' + json_data["server"] + '; \
@@ -19,5 +20,6 @@ class Connection:
             self.conn = pyodbc.connect(conn_str)
             Connection.__instance = self
 
-    def clear(self):
+    def close(self):
+        self.conn.close()
         Connection.__instance = None
