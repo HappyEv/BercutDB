@@ -1,0 +1,4 @@
+allure-pytest==2.9.43
+pyodbc==4.0.31
+pytest==6.2.4
+
