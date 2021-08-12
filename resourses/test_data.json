@@ -17,5 +17,16 @@
       "name": "Test",
       "phone": "+79650961409"
     }
+  },
+  "test_2": {
+    "balance_summ": 25
+  },
+  "test_3": {
+    "balance_summ": 74.99,
+    "balance_summ_expected": 24.99
+  },
+  "test_4": {
+    "balance_summ": 75,
+    "balance_summ_expected": 0
   }
 }

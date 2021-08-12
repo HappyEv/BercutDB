@@ -14,5 +14,6 @@ class Service(BaseTable):
         self.summ = summ
         self.comment = comment
 
-    def add_to_table(self, executor):
-        executor.modify(self._SQL_INSERT.format(self.id, self.name, self.cre_date, self.summ, self.comment))
+    def add_to_table(self):
+        self.executor.modify(self._SQL_INSERT.format(self.id, self.name, self.cre_date, self.summ, self.comment))
+

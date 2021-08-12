@@ -1,36 +1,36 @@
+import allure
+import pyodbc
 import pytest
-from tables.service import Service
-from tables.tariff import Tariff
-from tables.tariff_service import TariffService
-from tables.client import Client
-from tables.subscriber import Subscriber
+from steps import steps
 
 
-@pytest.mark.usefixtures("setup")
+@pytest.mark.usefixtures("connection", "clear_db", "create_product")
 class TestBercutDB:
-    def test_1(self):
-        params = self.test_data.get_data("test_1")
-        service = Service(self.executor, params["service"]["name"], params["service"]["summ"])
-        self.post_delete.append(service)
-        service.add_to_table(self.executor)
-        assert service.is_in_table(self.executor)
+    @allure.story("Тест-кейс 1: Создание абонента с базовым ТП")
+    def test_1_create_subscriber_with_basic_tp(self):
+        pass
 
-        tariff = Tariff(self.executor, params["tariff"]["name"], params["tariff"]["summ"])
-        self.post_delete.append(tariff)
-        tariff.add_to_table(self.executor)
-        assert tariff.is_in_table(self.executor)
+    @allure.story("Тест-кейс 2: Активация абонента")
+    def test_2_activate_subscriber(self):
+        steps.activate_sub(self.subscriber, 1)
+        steps.check_service_stat(self.subs_service, 1)
+        steps.check_client_balance(self.client, self.test_data.get_data("test_2")["balance_summ"], 1)
 
-        client = Client(self.executor, params["client"]["type_id"], params["client"]["name"], params["client"]["balance"])
-        self.post_delete.append(client)
-        client.add_to_table(self.executor)
-        assert client.is_in_table(self.executor)
+    @allure.story("Тест-кейс 3: Ошибка активации абонента")
+    def test_3_activate_subscriber_error(self):
+        steps.set_client_balance(self.client, self.test_data.get_data("test_3")["balance_summ"])
 
-        subscriber = Subscriber(self.executor, client.id, tariff.id, params["subscriber"]["phone"], params["subscriber"]["name"])
-        self.post_delete.append(subscriber)
-        subscriber.add_to_table(self.executor)
-        assert subscriber.is_in_table(self.executor)
+        with allure.step("Выполнить активацию клиента(ожидается ошибка)"):
+            with pytest.raises(pyodbc.ProgrammingError):
+                self.subscriber.activate()
+            assert self.subscriber.subs_stat_id == 4
 
-        tariff_service = TariffService(self.executor, tariff.id, service.id)
-        self.post_delete.append(tariff_service)
-        tariff_service.add_to_table(self.executor)
-        assert tariff.is_in_table(self.executor)
+        steps.check_service_stat(self.subs_service, 4)
+        steps.check_client_balance(self.client, self.test_data.get_data("test_3")["balance_summ_expected"], 1)
+
+    @allure.story("Тест-кейс 4: Блокирование абонента при активации")
+    def test_4_blocked_subscriber_activation(self):
+        steps.set_client_balance(self.client, self.test_data.get_data("test_4")["balance_summ"])
+        steps.activate_sub(self.subscriber, 1) # по условию должно быть 3
+        steps.check_service_stat(self.subs_service, 1)
+        steps.check_client_balance(self.client, self.test_data.get_data("test_4")["balance_summ_expected"], 3)

@@ -19,5 +19,5 @@ class TariffService(BaseTable):
         self.tariff_id = tariff_id
         self.service_id = service_id
 
-    def add_to_table(self, executor):
-        executor.modify(self._SQL_INSERT_PROCEDURE.format(self.tariff_id, self.service_id))
+    def add_to_table(self):
+        self.executor.modify(self._SQL_INSERT_PROCEDURE.format(self.tariff_id, self.service_id))

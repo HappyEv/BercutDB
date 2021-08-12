@@ -1,7 +1,5 @@
 {
   "driver": "ODBC Driver 17 for SQL Server",
-  "server": "localhost",
-  "db": "BercutDb",
-  "user": "SA",
-  "password": "sqrt25is_5"
+  "server": "DESKTOP-51ST1VH",
+  "db": "BercutDb"
 }

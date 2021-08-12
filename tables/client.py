@@ -13,7 +13,10 @@ BEGIN
 	print @id
 end
     """
+    _SQL_UPDATE_SUMM = "UPDATE CLIENT_BALANCE SET BALANCE_SUMM = {} WHERE CLNT_BAL_ID = {} "
     _SQL_SELECT = "SELECT CLNT_ID FROM CLIENT ORDER BY CLNT_ID"
+    _SQL_SELECT_SUMM = "SELECT BALANCE_SUMM FROM CLIENT_BALANCE WHERE CLNT_BAL_ID = {}"
+    _SQL_SELECT_BALANCE_STAT_ID = "SELECT BAL_STAT_ID FROM CLIENT_BALANCE WHERE CLNT_BAL_ID = {}"
     _SQL_DELETE = """DELETE FROM CLIENT_BALANCE WHERE CLNT_BAL_ID = {}
                      DELETE FROM CLIENT WHERE CLNT_ID = {}
                   """
@@ -31,8 +34,18 @@ end
         self.email = email
         self.comment = comment
 
-    def del_from_table(self, executor):
-        executor.modify(self._SQL_DELETE.format(self.id, self.id))
+    def del_from_table(self):
+        self.executor.modify(self._SQL_DELETE.format(self.id, self.id))
 
-    def add_to_table(self, executor):
-        executor.modify(self._SQL_INSERT.format(self.name, self.type_id, self.summ))
+    def add_to_table(self):
+        self.executor.modify(self._SQL_INSERT.format(self.name, self.type_id, self.summ))
+        self.balance_stat_id = tuple(self.executor.select(self._SQL_SELECT_BALANCE_STAT_ID.format(self.id))[0])[0]
+
+    def get_summ(self):
+        return tuple(self.executor.select(self._SQL_SELECT_SUMM.format(self.id))[0])[0]
+
+    def update_summ(self, new_summ=None):
+        if new_summ:
+            self.executor.modify(self._SQL_UPDATE_SUMM.format(new_summ, self.id))
+        self.summ = self.get_summ()
+        self.balance_stat_id = tuple(self.executor.select(self._SQL_SELECT_BALANCE_STAT_ID.format(self.id))[0])[0]
